@@ -74,7 +74,7 @@ const solarSystemData = {
     },
     mercury: { 
         name: { ko: "수성", en: "Mercury" },
-        radius: 0.02, 
+        radius: 0.04, 
         color: 0x8c6239,
         distance: 2,
         period: 2,
@@ -85,7 +85,7 @@ const solarSystemData = {
     },
     venus: { 
         name: { ko: "금성", en: "Venus" },
-        radius: 0.04, 
+        radius: 0.06, 
         color: 0xffc649,
         distance: 3,
         period: 3,
@@ -96,7 +96,7 @@ const solarSystemData = {
     },
     earth: { 
         name: { ko: "지구", en: "Earth" },
-        radius: 0.04, 
+        radius: 0.06, 
         color: 0x6b93d6,
         distance: 4,
         period: 4,
@@ -107,7 +107,7 @@ const solarSystemData = {
     },
     mars: { 
         name: { ko: "화성", en: "Mars" },
-        radius: 0.03, 
+        radius: 0.05, 
         color: 0xc1440e,
         distance: 5.5,
         period: 6,
@@ -118,7 +118,7 @@ const solarSystemData = {
     },
     jupiter: { 
         name: { ko: "목성", en: "Jupiter" },
-        radius: 0.12, 
+        radius: 0.15, 
         color: 0xd8ca9d,
         distance: 8,
         period: 12,
@@ -129,7 +129,7 @@ const solarSystemData = {
     },
     saturn: { 
         name: { ko: "토성", en: "Saturn" },
-        radius: 0.1, 
+        radius: 0.13, 
         color: 0xfad5a5,
         distance: 12,
         period: 20,
@@ -838,21 +838,37 @@ class SphericalTriangleApp {
         this.solarSystem.sun.position.set(0, 0, 0); // 태양을 정확히 중심에
         this.scene.add(this.solarSystem.sun);
         
-        // 태양 라벨 생성
+        // 태양 라벨 생성 (더 크고 명확하게)
         const sunCanvas = document.createElement('canvas');
         const sunContext = sunCanvas.getContext('2d');
-        sunCanvas.width = 128;
-        sunCanvas.height = 64;
-        sunContext.fillStyle = 'yellow';
-        sunContext.font = 'bold 18px Arial';
+        sunCanvas.width = 256;
+        sunCanvas.height = 80;
+        
+        // 배경 그리기 (반투명 오렌지)
+        sunContext.fillStyle = 'rgba(255, 140, 0, 0.8)';
+        sunContext.fillRect(0, 0, sunCanvas.width, sunCanvas.height);
+        
+        // 테두리 그리기
+        sunContext.strokeStyle = 'yellow';
+        sunContext.lineWidth = 3;
+        sunContext.strokeRect(3, 3, sunCanvas.width - 6, sunCanvas.height - 6);
+        
+        // 텍스트 그리기
+        sunContext.fillStyle = 'white';
+        sunContext.font = 'bold 24px Arial';
         sunContext.textAlign = 'center';
-        sunContext.fillText(solarSystemData.sun.name[currentLanguage], 64, 32);
+        sunContext.textBaseline = 'middle';
+        sunContext.fillText(solarSystemData.sun.name[currentLanguage], sunCanvas.width / 2, sunCanvas.height / 2);
         
         const sunTexture = new THREE.CanvasTexture(sunCanvas);
-        const sunSpriteMaterial = new THREE.SpriteMaterial({ map: sunTexture });
+        const sunSpriteMaterial = new THREE.SpriteMaterial({ 
+            map: sunTexture,
+            transparent: true,
+            alphaTest: 0.1
+        });
         const sunSprite = new THREE.Sprite(sunSpriteMaterial);
-        sunSprite.position.set(0, solarSystemData.sun.radius + 0.5, 0);
-        sunSprite.scale.set(1, 0.5, 1);
+        sunSprite.position.set(0, solarSystemData.sun.radius + 0.8, 0);
+        sunSprite.scale.set(2, 0.8, 1);
         this.scene.add(sunSprite);
         this.solarSystem.planets.push(sunSprite);
         
@@ -885,26 +901,48 @@ class SphericalTriangleApp {
             this.scene.add(planet);
             this.solarSystem.planets.push(planet);
             
-            // 행성 라벨 생성
+            // 행성 라벨 생성 (더 크고 명확하게)
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
-            canvas.width = 128;
-            canvas.height = 64;
+            canvas.width = 256;
+            canvas.height = 80;
+            
+            // 배경 그리기 (반투명 검은색)
+            context.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 테두리 그리기
+            context.strokeStyle = 'white';
+            context.lineWidth = 2;
+            context.strokeRect(2, 2, canvas.width - 4, canvas.height - 4);
+            
+            // 텍스트 그리기
             context.fillStyle = 'white';
-            context.font = '16px Arial';
+            context.font = 'bold 20px Arial';
             context.textAlign = 'center';
-            context.fillText(planetData.name[currentLanguage], 64, 32);
+            context.textBaseline = 'middle';
+            context.fillText(planetData.name[currentLanguage], canvas.width / 2, canvas.height / 2);
             
             const texture = new THREE.CanvasTexture(canvas);
-            const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+            const spriteMaterial = new THREE.SpriteMaterial({ 
+                map: texture,
+                transparent: true,
+                alphaTest: 0.1
+            });
             const sprite = new THREE.Sprite(spriteMaterial);
             sprite.position.copy(planet.position);
-            sprite.position.y += planetData.radius + 0.3; // 행성 위에 라벨 배치
-            sprite.scale.set(0.8, 0.4, 1);
+            sprite.position.y += planetData.radius + 0.5; // 행성 위에 더 높게 라벨 배치
+            sprite.scale.set(1.5, 0.6, 1); // 더 크게 설정
+            sprite.userData = { 
+                isPlanetLabel: true, 
+                planetName: planetKey,
+                offset: planetData.radius + 0.5
+            };
             
             // 라벨도 planet userData에 저장하여 함께 움직이도록
             planet.userData.label = sprite;
             this.scene.add(sprite);
+            this.solarSystem.planets.push(sprite); // 라벨도 planets 배열에 추가
             this.solarSystem.planets.push(sprite);
             
             // 궤도 생성
@@ -948,8 +986,11 @@ class SphericalTriangleApp {
     updateSolarSystem() {
         // 행성들의 공전 애니메이션
         this.solarSystem.planets.forEach(object => {
-            // 스프라이트(라벨)는 건너뛰기
+            // 라벨(스프라이트)은 건너뛰기
             if (object instanceof THREE.Sprite) return;
+            
+            // 행성이 아닌 객체는 건너뛰기
+            if (!object.userData || !object.userData.distance) return;
             
             const userData = object.userData;
             userData.angle += (0.01 * this.solarSystem.planetSpeed) / userData.period;
@@ -957,11 +998,11 @@ class SphericalTriangleApp {
             object.position.x = Math.cos(userData.angle) * userData.distance;
             object.position.z = Math.sin(userData.angle) * userData.distance;
             
-            // 라벨도 함께 이동
+            // 해당 행성의 라벨도 함께 업데이트
             if (userData.label) {
                 userData.label.position.x = object.position.x;
                 userData.label.position.z = object.position.z;
-                userData.label.position.y = object.position.y + userData.label.userData?.offset || 0.5;
+                userData.label.position.y = object.position.y + userData.label.userData.offset;
             }
         });
     }
@@ -988,6 +1029,9 @@ function changeLanguage() {
         // 삼각형 업데이트하여 좌표값들도 새로고침
         if (currentMode === 'spherical') {
             app.updateTriangle();
+        } else if (currentMode === 'solar') {
+            // 태양계 모드에서는 라벨 언어만 업데이트
+            app.createSolarSystem();
         }
     }
 }
