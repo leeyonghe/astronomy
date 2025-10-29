@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>구면삼각법 3D 시각화</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+        
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 300px;
+        }
+        
+        h1 {
+            margin-top: 0;
+            color: #ffffff;
+            font-size: 24px;
+        }
+        
+        .control-group {
+            margin: 15px 0;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .value-display {
+            color: #88ccff;
+            font-size: 14px;
+        }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+        
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 101;
+        }
+        
+        select {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border: 1px solid #4CAF50;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: #88ccff;
+        }
+        
+        #info {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            color: white;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 280px;
+            font-size: 14px;
+        }
+        
+        .coordinates {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px;
+            border-radius: 5px;
+            margin: 8px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+        
+        .coord-header {
+            font-weight: bold;
+            color: #88ccff;
+            margin-bottom: 5px;
+        }
+        
+        .coord-point {
+            margin: 3px 0;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        
+        .point-a { background: rgba(255, 0, 0, 0.2); }
+        .point-b { background: rgba(0, 255, 0, 0.2); }
+        .point-c { background: rgba(0, 0, 255, 0.2); }
+        
+        .formula {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .mode-selector {
+            position: absolute;
+            top: 70px;
+            right: 20px;
+            z-index: 101;
+        }
+        
+        .mode-tabs {
+            display: flex;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .mode-tab {
+            background: rgba(0, 0, 0, 0.8);
+            color: #ccc;
+            border: none;
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            border-right: 1px solid #555;
+        }
+        
+        .mode-tab:last-child {
+            border-right: none;
+        }
+        
+        .mode-tab.active {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .mode-tab:hover:not(.active) {
+            background: rgba(76, 175, 80, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div class="language-selector">
+            <select id="languageSelect" onchange="changeLanguage()">
+                <option value="ko">한국어</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+        
+        <div class="mode-selector">
+            <div class="mode-tabs">
+                <button class="mode-tab active" onclick="switchMode('spherical')">구면삼각법</button>
+                <button class="mode-tab" onclick="switchMode('solar')">태양계</button>
+            </div>
+        </div>
+        
+        <div id="ui">
+            <!-- UI 내용은 JavaScript에서 동적으로 생성됩니다 -->
+        </div>
+        
+        <div id="info">
+            <!-- 정보 패널 내용은 JavaScript에서 동적으로 생성됩니다 -->
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
